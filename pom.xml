@@ -2,13 +2,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.amazonaws.samples</groupId>
-    <artifactId>aws-java-sample</artifactId>
+    <groupId>nl.tudelft.ec2interface</groupId>
+    <artifactId>ec2interface</artifactId>
     <version>1.0</version>
     <packaging>jar</packaging>
 
-    <name>aws-java-sample</name>
-    <url>http://aws.amazon.com/sdkforjava</url>
+    <name>ec2interface</name>
+    <url>http://www.studiegids.tudelft.nl/a101_displayCourse.do?course_id=28324</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -36,7 +36,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>com.amazonaws.samples.S3Sample</mainClass>
+                    <mainClass>nl.tudelft.ec2interface.EC2Interface</mainClass>
                 </configuration>
             </plugin>
                 <plugin>
