@@ -1,13 +1,15 @@
 package nl.tudelft.ec2interface;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.auth.ClasspathPropertiesFileCredentialsProvider;
@@ -15,12 +17,9 @@ import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.ec2.AmazonEC2;
 import com.amazonaws.services.ec2.AmazonEC2Client;
-import com.amazonaws.services.ec2.model.DescribeInstanceStatusRequest;
-import com.amazonaws.services.ec2.model.DescribeInstanceStatusResult;
 import com.amazonaws.services.ec2.model.DescribeInstancesRequest;
 import com.amazonaws.services.ec2.model.DescribeInstancesResult;
 import com.amazonaws.services.ec2.model.Instance;
-import com.amazonaws.services.ec2.model.InstanceStatus;
 import com.amazonaws.services.ec2.model.Placement;
 import com.amazonaws.services.ec2.model.Reservation;
 import com.amazonaws.services.ec2.model.RunInstancesRequest;
@@ -33,10 +32,11 @@ public class EC2Interface {
 
 	public static void main(String[] args) throws IOException {
 		EC2Interface ec2 = new EC2Interface();
-		System.out.println(ec2.runNewInstance());
-		//System.out.println(ec2.getInstanceInfo("i-4c0d6316"));
+		String instanceId = ec2.runNewInstance();
+		System.out.println(ec2.getInstanceInfo(instanceId));
+		ec2.configureInstance(instanceId);
 		//System.out.println(ec2.getInstanceList().toString());
-		//ec2.terminateInstance("i-4c0d6316");
+		ec2.terminateInstance(instanceId);
 		//ec2.terminateInstances(new ArrayList<String>(){{add("i-b8e4a1e3");add("i-5f879804");}});
 	}
 	
@@ -64,34 +64,8 @@ public class EC2Interface {
 		RunInstancesResult runInstancesResult = ec2.runInstances(runInstancesRequest);
 		List<Instance> instances = runInstancesResult.getReservation().getInstances();
 		
-		System.out.println("RunInstance request has been sent");
-		
 		String instanceId = instances.get(0).getInstanceId();
-		
-		System.out.println(getInstanceInfo(instanceId));
-		
-		
-		boolean configured = false;
-		
-		do {
-			try {
-				
-				Thread.sleep(60 * 1000);
-				System.out.println(getInstanceInfo(instanceId));
-				InstanceInfo iInfo = getInstanceInfo(instanceId);
-				if (iInfo.getStatus().equals("running")) {
-						configureInstance(iInfo.getPublicIP());
-						configured = true;
-				}
-				
-			} catch (AmazonServiceException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		} while (!configured);
+		System.out.println("A RunInstance request has been sent. Find it with the instance id " + instanceId);
 		
 		return instanceId;
 	}
@@ -105,6 +79,8 @@ public class EC2Interface {
 	
 	public void terminateInstances(ArrayList<String> instanceIds)
 	{
+		System.out.println("A TerminateInstance request has been sent for instances with id " + instanceIds);
+		
 		try {
         	// Terminate instances.
         	TerminateInstancesRequest terminateRequest = new TerminateInstancesRequest(instanceIds);
@@ -157,27 +133,87 @@ public class EC2Interface {
 		return instanceIds;
 	}
 	
-	public void configureInstance(String publicIP)
+	public void configureInstance(String instanceId)
 	{
+		boolean configured = false;
+		
+		System.out.println("Start applying configuration to instance " + instanceId);
+		
+		do {
+			try {
+				
+				InstanceInfo iInfo = getInstanceInfo(instanceId);
+				if (iInfo.getStatus().equals("running")) {
+					configureInstancebyBashScript(iInfo.getPublicIP());
+					configured = true;
+				}
+				else
+				{
+					System.out.println("-->Instance " + instanceId + " is not running yet, try again in 60 seconds : " + getInstanceInfo(instanceId));
+				}
+				
+				Thread.sleep(60 * 1000);
+			} catch (AmazonServiceException e) {
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		} while (!configured);
+		
+		System.out.println("-->Presumably instance " +  instanceId + " is correctly configurd after 10 minutes");
+		
+	}
+	
+	public void configureInstancebyBashScript(String publicIP)
+	{
+		System.out.println("-->SSH Connection to IP " + publicIP + ", the configuration process will be terminated after 10 minutes.");
 		try {
-			final ProcessBuilder pb = new ProcessBuilder("/bin/sh", "initInstance", publicIP , "joseph_wing.pem");
-			pb.directory(new File("."));
-			pb.redirectErrorStream(true);
-			final Process p = pb.start();
-			//final int processStatus = p.waitFor();
-			
-//		    InputStream is = p.getInputStream();
-//		    InputStreamReader isr = new InputStreamReader(is);
-//		    BufferedReader br = new BufferedReader(isr);
-//		    String line;
-//		    while ((line = br.readLine()) != null) {
-//		      System.out.println(line);
-//		    }
-		    System.out.println("Program terminated!");
-			
-		} catch (IOException e) {
+    	Set<Callable<String>> callables = new HashSet<Callable<String>>();
+    	callables.add(new BashScriptInstanceConfigurator(publicIP));
+    	
+    	ExecutorService executor = Executors.newSingleThreadExecutor();
+		executor.invokeAll(callables,10, TimeUnit.MINUTES);
+    	executor.shutdown();
+    	
+    	} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+    	
 	}
+	
+	public static class BashScriptInstanceConfigurator implements Callable<String>
+    {
+        private String publicIP;
+
+        public BashScriptInstanceConfigurator (String publicIP)
+        {
+            this.publicIP = publicIP;
+        }
+
+        @Override
+        public String call() throws Exception {
+
+    		try {
+    			final ProcessBuilder pb = new ProcessBuilder("/bin/sh", "initInstance", publicIP , "joseph_wing.pem");
+    			pb.directory(new File("."));
+    			pb.redirectErrorStream(true);
+    			final Process p = pb.start();
+    			final int processStatus = p.waitFor();
+    			
+    		    //InputStream is = p.getInputStream();
+    			//InputStreamReader isr = new InputStreamReader(is);
+    			//BufferedReader br = new BufferedReader(isr);
+    			//String line;
+    			//while ((line = br.readLine()) != null) {
+    			//  System.out.println(line);
+    			//}
+    		} catch (IOException e) {
+    			e.printStackTrace();
+    		} catch (InterruptedException e) {
+    			//It's OK to interrupted, not going to terminate anyway :P
+    		}
+            return "success";
+        }
+    }
 
 }
