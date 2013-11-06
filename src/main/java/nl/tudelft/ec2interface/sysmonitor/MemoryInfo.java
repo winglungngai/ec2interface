@@ -2,11 +2,11 @@ package nl.tudelft.ec2interface.sysmonitor;
 
 public class MemoryInfo {
 
-	int totalSystemMemory;
-	int usedSystemMemory;
-	int actualSystemMemory;
-	int usage;
-	int actualUsage;
+	private int totalSystemMemory;
+	private int usedSystemMemory;
+	private int actualSystemMemory;
+	private int usage;
+	private int actualUsage;
 
 	public int getTotalSystemMemory() {
 		return totalSystemMemory;
