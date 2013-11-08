@@ -29,7 +29,7 @@ public class MemoryUsage extends SigarCommandBase {
 			mInfo.setActualSystemMemory((int) (mem.getActualUsed()/1024/1024));
 			mInfo.setUsage(mInfo.getUsedSystemMemory()*100/mInfo.getTotalSystemMemory());
 			mInfo.setActualUsage(mInfo.getActualSystemMemory()*100/mInfo.getTotalSystemMemory());
-			System.out.println(mInfo);
+
 			return mInfo;
         } catch (SigarException e) {
 			// TODO Auto-generated catch block

@@ -39,7 +39,6 @@ public class DiskUsage extends SigarCommandBase {
 			dInfo.setTotalDiskSpace((int) usage.getTotal() / 1024);
 			dInfo.setUsedDiskSpace((int) (usage.getTotal() - usage.getFree()) / 1024);
 			dInfo.setUsage(dInfo.getUsedDiskSpace() * 100 / dInfo.getTotalDiskSpace());
-			System.out.println(dInfo);
 			
 			return dInfo;
 			

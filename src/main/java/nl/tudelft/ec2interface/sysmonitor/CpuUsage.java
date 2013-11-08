@@ -36,7 +36,7 @@ public class CpuUsage extends SigarCommandBase {
 	        cInfo.setSysTime((int) Math.round(cpu.getSys() * 100));
 	        cInfo.setIdleTime((int) Math.round(cpu.getIdle() * 100));
 	        cInfo.setUsage(100-cInfo.getIdleTime());
-	        System.out.println(cInfo);
+	        
 	        return cInfo;
 	        
 		} catch (SigarException e) {
