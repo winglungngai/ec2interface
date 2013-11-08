@@ -37,9 +37,9 @@ public class EC2Interface {
 
 	public static void main(String[] args) throws IOException {
 		EC2Interface ec2 = new EC2Interface("conf/AwsCredentials.properties");
-		String instanceId = ec2.runNewInstance();
-		System.out.println(ec2.getInstanceInfo(instanceId));
-		ec2.configureInstance(instanceId, "conf/initInstance.sh", "conf/joseph_wing.pem");
+		String instanceId = ec2.runNewInstance("ami-caf7c18f");
+		//System.out.println(ec2.getInstanceInfo(instanceId));
+		//ec2.configureInstance(instanceId, "conf/initInstance.sh", "conf/joseph_wing.pem");
 		//System.out.println(ec2.getInstanceList().toString());
 		//ec2.terminateInstance(instanceId);
 		//ec2.terminateInstances(new ArrayList<String>(){{add("i-b8e4a1e3");add("i-5f879804");}});
@@ -59,12 +59,12 @@ public class EC2Interface {
 
 	}
 	
-	public String runNewInstance()
+	public String runNewInstance(String imageId)
 	{
 		RunInstancesRequest runInstancesRequest = new RunInstancesRequest();
 
 		runInstancesRequest
-				.withImageId("ami-acf9cde9")
+				.withImageId(imageId)
 				.withInstanceType("t1.micro")
 				.withMinCount(1)
 				.withMaxCount(1)
