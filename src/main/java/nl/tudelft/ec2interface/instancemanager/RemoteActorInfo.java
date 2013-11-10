@@ -12,9 +12,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.sun.org.apache.bcel.internal.generic.NEW;
 
-public class MasterActorInfo {
+public class RemoteActorInfo {
 	
 	private String publicIP;
+	private String actorPath;
 	
 	public String getPublicIP() {
 		return publicIP;
@@ -24,7 +25,15 @@ public class MasterActorInfo {
 		this.publicIP = publicIP;
 	}
 
-	public String ToJson(MasterActorInfo maInfo)
+	public String getActorPath() {
+		return actorPath;
+	}
+
+	public void setActorPath(String actorPath) {
+		this.actorPath = actorPath;
+	}
+
+	public String ToJson(RemoteActorInfo maInfo)
 	{
 		try {
 			
@@ -40,11 +49,11 @@ public class MasterActorInfo {
 		
 	}
 	
-	public MasterActorInfo FromJson(String jsonString)
+	public RemoteActorInfo FromJson(String jsonString)
 	{
 		try {
 			
-			MasterActorInfo maInfo = new ObjectMapper().readValue(jsonString, MasterActorInfo.class);
+			RemoteActorInfo maInfo = new ObjectMapper().readValue(jsonString, RemoteActorInfo.class);
 			return maInfo;
 			
 		} catch (JsonProcessingException e) {
@@ -56,18 +65,19 @@ public class MasterActorInfo {
 		}
 	}
 	
-	public MasterActorInfo setInfo(String publicIP)
+	public RemoteActorInfo setInfo(String publicIP, String actorPath)
 	{
-		MasterActorInfo maInfo = new MasterActorInfo();
+		RemoteActorInfo maInfo = new RemoteActorInfo();
 		maInfo.setPublicIP(publicIP);
+		maInfo.setActorPath(actorPath);
 		return maInfo;
 	}
 	
-	public MasterActorInfo getInfoFromFile(String filePath)
+	public RemoteActorInfo getInfoFromFile(String filePath)
 	{
 		try {
 			String jsonString = new Scanner(new File(filePath)).useDelimiter("\\Z").next();
-			return new MasterActorInfo().FromJson(jsonString);
+			return new RemoteActorInfo().FromJson(jsonString);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			return null;
@@ -76,13 +86,14 @@ public class MasterActorInfo {
 	
 	public static void main(String[] args)
 	{
-		MasterActorInfo maInfo = new MasterActorInfo().setInfo("232.388.1");
+		RemoteActorInfo maInfo = new RemoteActorInfo().setInfo("127.0.0.1:2552", "akka.tcp://MasterNode@127.0.0.1:2552/user/masterActor");
 		
 		String maInfoString = maInfo.ToJson(maInfo).toString();
 		
 		System.out.println(maInfoString);
 		System.out.println(maInfo.FromJson(maInfoString).getPublicIP());
-		System.out.println(new MasterActorInfo().getInfoFromFile("masterInfo").getPublicIP());
+		System.out.println(maInfo.FromJson(maInfoString).getActorPath());
+		System.out.println(new RemoteActorInfo().getInfoFromFile("masterInfo").getPublicIP());
 		
 	}
 
