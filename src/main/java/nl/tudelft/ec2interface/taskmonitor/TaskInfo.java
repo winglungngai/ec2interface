@@ -7,27 +7,36 @@ import java.util.TimeZone;
 
 public class TaskInfo {
 
-	private int masterId;
-	private int workerId;
+	private String uuid;
+	private String masterId;
+	private String workerId;
 	private Timestamp receiveTime;
-	private Timestamp waitingTime;
+	private Timestamp transferTime;
 	private Timestamp startTime;
 	private Timestamp finishTime;
 	private int taskSize;
 	
-	public int getMasterId() {
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public String getMasterId() {
 		return masterId;
 	}
 
-	public void setMasterId(int masterId) {
+	public void setMasterId(String masterId) {
 		this.masterId = masterId;
 	}
 
-	public int getWorkerId() {
+	public String getWorkerId() {
 		return workerId;
 	}
 
-	public void setWorkerId(int workerId) {
+	public void setWorkerId(String workerId) {
 		this.workerId = workerId;
 	}
 
@@ -39,12 +48,12 @@ public class TaskInfo {
 		this.receiveTime = receiveTime;
 	}
 
-	public Timestamp getWaitingTime() {
-		return waitingTime;
+	public Timestamp getTransferTime() {
+		return transferTime;
 	}
 
-	public void setWaitingTime(Timestamp waitingTime) {
-		this.waitingTime = waitingTime;
+	public void setTransferTime(Timestamp transferTime) {
+		this.transferTime = transferTime;
 	}
 
 	public Timestamp getStartTime() {
@@ -78,6 +87,21 @@ public class TaskInfo {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		dateFormat.setTimeZone(TimeZone.getTimeZone("Europe/Amsterdam"));
 		return dateFormat.format(amsterdam.getTime());
+	}
+
+	
+	
+	@Override
+	public String toString() {
+		return "TaskInfo " + "\n"
+				+ " uuid=" + uuid + "\n"
+				+ " masterId=" + masterId + "\n"
+				+ " workerId=" + workerId + "\n"
+				+ " receiveTime=" + receiveTime + "\n"
+				+ " transferTime=" + transferTime + "\n"
+				+ " startTime=" + startTime + "\n"
+				+ " finishTime=" + finishTime + "\n"
+				+ " taskSize=" + taskSize;
 	}
 
 	public static void main(String[] args)
