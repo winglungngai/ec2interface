@@ -2,6 +2,7 @@ package nl.tudelft.ec2interface.sysmonitor;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Timestamp;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,24 +10,38 @@ import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
 public class SystemUsage {
+	
+	private String configFile;
+	
+	public SystemUsage(String configFile)
+	{
+		setConfigFile(configFile);
+	}
+	
+	public SystemUsage()
+	{
+		setConfigFile("conf/");
+	}
 
 	public static void main(String[] args)
 	{
-		SystemInfo info = SystemUsage.getInfo();
-		System.out.println(SystemUsage.ToJson(info));
-		System.out.println(SystemUsage.FromJson(SystemUsage.ToJson(info)));
+		SystemUsageInfo info = new SystemUsage("conf/").getInfo();
+		System.out.println(new SystemUsage("conf/").ToJson(info));
+		System.out.println(new SystemUsage("conf/").FromJson(new SystemUsage("conf/").ToJson(info)));
 	}
 	
-	public static SystemInfo getInfo()
+	public SystemUsageInfo getInfo()
 	{
-		SystemInfo sInfo = new SystemInfo();
+		System.setProperty("java.library.path",configFile);
+		SystemUsageInfo sInfo = new SystemUsageInfo();
+		sInfo.setTimestamp(new Timestamp(System.currentTimeMillis()));
 		sInfo.setCpuInfo(new CpuUsage().getInfo());
 		sInfo.setMemoryInfo(new MemoryUsage().getInfo());
 		sInfo.setDiskInfo(new DiskUsage().getInfo());
 		return sInfo;
 	}
 	
-	public static String ToJson(SystemInfo sInfo)
+	public String ToJson(SystemUsageInfo sInfo)
 	{
 		try {
 			
@@ -42,12 +57,12 @@ public class SystemUsage {
 		
 	}
 	
-	public static SystemInfo FromJson(String jsonString)
+	public SystemUsageInfo FromJson(String jsonString)
 	{
 
 		try {
 			
-			SystemInfo sInfo = new ObjectMapper().readValue(jsonString, SystemInfo.class);
+			SystemUsageInfo sInfo = new ObjectMapper().readValue(jsonString, SystemUsageInfo.class);
 			return sInfo;
 			
 		} catch (JsonProcessingException e) {
@@ -58,5 +73,15 @@ public class SystemUsage {
 			return null;
 		}
 	}
+
+	public String getConfigFile() {
+		return configFile;
+	}
+
+	public void setConfigFile(String configFile) {
+		this.configFile = configFile;
+	}
+	
+	
 	
 }
