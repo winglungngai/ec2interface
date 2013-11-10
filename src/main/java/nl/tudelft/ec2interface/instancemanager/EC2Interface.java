@@ -37,7 +37,7 @@ public class EC2Interface {
 
 	public static void main(String[] args) throws IOException {
 		EC2Interface ec2 = new EC2Interface("conf/AwsCredentials.properties");
-		String instanceId = ec2.runNewInstance("ami-caf7c18f");
+		String instanceId = ec2.runNewInstance("ami-22dcea67");
 		//System.out.println(ec2.getInstanceInfo(instanceId));
 		//ec2.configureInstance(instanceId, "conf/initInstance.sh", "conf/joseph_wing.pem");
 		//System.out.println(ec2.getInstanceList().toString());
