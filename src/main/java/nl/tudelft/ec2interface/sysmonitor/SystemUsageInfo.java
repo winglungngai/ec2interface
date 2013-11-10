@@ -8,11 +8,29 @@ import java.util.TimeZone;
 
 public class SystemUsageInfo {
 
+	private String workerId;
+	private String instanceId;
 	private Timestamp timestamp;
 	private CpuInfo cpuInfo;
 	private MemoryInfo memoryInfo;
 	private DiskInfo diskInfo;
 	
+	public String getWorkerId() {
+		return workerId;
+	}
+
+	public void setWorkerId(String workerId) {
+		this.workerId = workerId;
+	}
+
+	public String getInstanceId() {
+		return instanceId;
+	}
+
+	public void setInstanceId(String instanceId) {
+		this.instanceId = instanceId;
+	}
+
 	public CpuInfo getCpuInfo() {
 		return cpuInfo;
 	}
@@ -50,7 +68,8 @@ public class SystemUsageInfo {
 		return "SystemUsageInfo (" + displayTime(timestamp) + ") " + "\n"
 				+ cpuInfo + "\n"
 				+ memoryInfo + "\n"
-				+ diskInfo + "\n";
+				+ diskInfo + "\n"
+				+ "\n";
 	}
 	
 	public String displayTime(Timestamp timestamp)

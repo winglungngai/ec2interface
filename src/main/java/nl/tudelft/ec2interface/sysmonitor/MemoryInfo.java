@@ -55,7 +55,7 @@ public class MemoryInfo {
 				+ " usedSystemMemory=" + usedSystemMemory + "MB" + "\n"
 				+ " usage=" + usage + "%" + "\n"
 				+ " actualSystemMemory=" + actualSystemMemory + "MB" + "\n"
-				+ " actualUsage=" + actualUsage + "%" + "\n";
+				+ " actualUsage=" + actualUsage + "%";
 	}
 	
 	

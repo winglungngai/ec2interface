@@ -7,14 +7,30 @@ import java.util.TimeZone;
 
 public class TaskInfo {
 
+	private int masterId;
+	private int workerId;
 	private Timestamp receiveTime;
-	private Timestamp queueTime;
-	private Timestamp processingTime;
+	private Timestamp waitingTime;
+	private Timestamp startTime;
 	private Timestamp finishTime;
-	//private int id;
-	//private int masterid;
-	//private int workerid;
+	private int taskSize;
 	
+	public int getMasterId() {
+		return masterId;
+	}
+
+	public void setMasterId(int masterId) {
+		this.masterId = masterId;
+	}
+
+	public int getWorkerId() {
+		return workerId;
+	}
+
+	public void setWorkerId(int workerId) {
+		this.workerId = workerId;
+	}
+
 	public Timestamp getReceiveTime() {
 		return receiveTime;
 	}
@@ -23,20 +39,20 @@ public class TaskInfo {
 		this.receiveTime = receiveTime;
 	}
 
-	public Timestamp getQueueTime() {
-		return queueTime;
+	public Timestamp getWaitingTime() {
+		return waitingTime;
 	}
 
-	public void setQueueTime(Timestamp queueTime) {
-		this.queueTime = queueTime;
+	public void setWaitingTime(Timestamp waitingTime) {
+		this.waitingTime = waitingTime;
 	}
 
-	public Timestamp getProcessingTime() {
-		return processingTime;
+	public Timestamp getStartTime() {
+		return startTime;
 	}
 
-	public void setProcessingTime(Timestamp processingTime) {
-		this.processingTime = processingTime;
+	public void setStartTime(Timestamp startTime) {
+		this.startTime = startTime;
 	}
 
 	public Timestamp getFinishTime() {
@@ -47,6 +63,14 @@ public class TaskInfo {
 		this.finishTime = finishTime;
 	}
 	
+	public int getTaskSize() {
+		return taskSize;
+	}
+
+	public void setTaskSize(int taskSize) {
+		this.taskSize = taskSize;
+	}
+
 	public String displayTime(Timestamp timestamp)
 	{
 		Calendar amsterdam = Calendar.getInstance();

@@ -1,12 +1,9 @@
 package nl.tudelft.ec2interface.sysmonitor;
 
-import java.io.File;
 import java.io.IOException;
 import java.sql.Timestamp;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
 public class SystemUsage {
